@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using SchoolApp.API.Data;
 using SchoolApp.API.Data.Models;
+using SchoolApp.API.Data.Models.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +30,35 @@ namespace SchoolApp.API.Controllers
             _roleManager = roleManager;
             _context = context;
             _configuration = configuration;
+        }
+
+        [HttpPost("register-user")]
+        public async Task<IActionResult> Register([FromBody]RegisterVM registerVM)
+        {
+            if(!ModelState.IsValid)
+            {
+                return BadRequest("Please, provide all the required fields");
+            }
+
+            var userExists = await _userManager.FindByEmailAsync(registerVM.EmailAdress);
+            if(userExists != null)
+            {
+                return BadRequest($"User {registerVM.EmailAdress} already exists");
+            }
+
+            ApplicationUser newUser = new ApplicationUser()
+            {
+                FirstName = registerVM.FirstName,
+                LastName = registerVM.LastName,
+                Email = registerVM.EmailAdress,
+                UserName = registerVM.UserName,
+                SecurityStamp = Guid.NewGuid().ToString()
+            };
+
+            var results = await _userManager.CreateAsync(newUser, registerVM.Password);
+
+            if (results.Succeeded) return Ok("User created");
+            return BadRequest("User could not be created");
         }
     }
 }
