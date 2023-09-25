@@ -10,8 +10,8 @@ using SchoolApp.API.Data;
 namespace SchoolApp.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20210624133509_RefreshTokensTableAdded")]
-    partial class RefreshTokensTableAdded
+    [Migration("20230925111823_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
